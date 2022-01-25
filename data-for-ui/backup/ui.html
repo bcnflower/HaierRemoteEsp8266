@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AC Control</title>
+    <style type="text/css">
+    .container {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .bi {
+        color: #fff;
+        background-color: #5bc0de;
+        border-color: #46b8da;
+    }
+
+    .bd {
+        color: #333;
+        background-color: #e6e6e6;
+        border-color: #adadad;
+    }
+
+    .b {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+
+        width: 55px;
+        /*float: left;*/
+        margin: 5px;
+        overflow-y: auto;
+    }
+
+    .c {
+        text-align: center;
+    }
+
+    .t {
+        width: 80px;
+        font-weight: bold;
+        font-size: 2.2em;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        /* display: none; <- Crashes Chrome on hover */
+        -webkit-appearance: none;
+        margin: 0;
+        /* <-- Apparently some margin are still there even though it's hidden */
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+        /* Firefox */
+    }
+
+    input[type="text"]#unit {
+        -webkit-appearance: none !important;
+        border-left: 0px;
+        margin: 0 0 0 -40px;
+    }
+
+    input[type="number"]#tmp {
+        -webkit-appearance: none !important;
+        border-right: 0px;
+        outline: none;
+    }
+
+    /*    .button-container {
+        overflow-y: auto;
+    }
+
+    .button-container>a {
+        width: 55px;
+        float: left;
+        margin: 5px;
+    }*/
+    </style>
+</head>
+
+<body style="font-family: verdana;">
+    <div class="container">
+        <table border="2" class="c">
+            <tr>
+                <td colspan="3">-----------AC Control------------</td>
+            </tr>
+            <tr>
+                <td>
+                    AC State:
+                </td>
+                <td>
+                    <a id="pb" class="b bd t" onclick="tp();">OFF</a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="menu-container">
+                        <a id="f0" class="b bd" onclick="fs(0);">Auto</a>
+                        <a id="f1" class="b bd" onclick="fs(1);">Low</a>
+                        <a id="f2" class="b bd" onclick="fs(2);">Medium</a>
+                        <a id="f3" class="b bd" onclick="fs(3);">High</a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="menu-container">
+                        <a id="m0" class="b bd" onclick="m(0);">Auto</a>
+                        <a id="m1" class="b bd" onclick="m(1);">Cool</a>
+                        <a id="m2" class="b bd" onclick="m(2);">Dry</a>
+                        <a id="m3" class="b bd" onclick="m(3);">Heat</a>
+                        <a id="m4" class="b bd" onclick="m(4);">Fan</a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="menu-container">
+                        <a id="s0" class="b bd" onclick="sw(0);">Off</a>
+                        <a id="s1" class="b bd" onclick="sw(1);">Up</a>
+                        <a id="s2" class="b bd" onclick="sw(2);">Down</a>
+                        <a id="s3" class="b bd" onclick="sw(3);">Change</a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="menu-container">
+                        <a id="s0" class="b bd t" onclick="tmpChg(-1);">-</a>
+                        <input class="b bd t" type="number" id="tmp" style="width: 80px" value="26" onchange="tmpChg(0);">
+                        <input class="b bd t" type="text" id="unit" value="&deg;C" disabled>
+                        <!-- <a id="s1" class="b bd t">C</a> -->
+                        <a id="s2" class="b bd t" onclick="tmpChg(+1);">+</a>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script type="text/javascript">
+    var s = {}
+    var tmp = id("tmp");
+
+    function id(t) {
+        return document.getElementById(t);
+    }
+
+    function txt(t, x) {
+        t.innerHTML = x;
+    }
+
+    function btTgl(bt, on = true) {
+        if (on) {
+            bt.classList.remove("bd");
+            bt.classList.add("bi");
+        } else {
+            bt.classList.remove("bi");
+            bt.classList.add("bd");
+        }
+    }
+
+    function tp() {
+        var e = id("pb");
+        if (s["power"]) {
+            s["power"] = false;
+            txt(e, "OFF");
+            btTgl(e, 0);
+        } else {
+            s["power"] = true;
+            txt(e, "ON");
+            btTgl(e, 1);
+        }
+    }
+
+    function fsc(f) {
+        for (var i = 0; i < 4; ++i) {
+            btTgl(id("f" + i), 0);
+        }
+        btTgl(id("f" + f), 1);
+    }
+
+    function fs(f) {
+        if (s["mode"] !== 0) {
+            s["fan"] = f;
+            fsc(f);
+        }
+    }
+
+    function mc(c) {
+        for (var i = 0; i < 5; ++i) {
+            btTgl(id("m" + i), 0);
+        }
+        btTgl(id("m" + c), 1);
+    }
+
+    function m(c) {
+        s["mode"] = c;
+        mc(c)
+    }
+
+    function swc(m) {
+        for (var i = 0; i < 4; ++i) {
+            btTgl(id("s" + i), 0);
+        }
+        btTgl(id("s" + m), 1);
+    }
+
+    function sw(m) {
+        s["swing"] = m;
+        swc(m);
+    }
+
+    s["temp"] = 26;
+
+    function tmpChg(t) {
+        if (t == 0) {
+            console.log(tmp.value);
+            s["temp"] = parseInt(tmp.value);
+        } else {
+            s["temp"] += t;
+        }
+        if (s["temp"] < 16) {
+            s["temp"] = 16;
+        }
+        if (s["temp"] > 30) {
+            s["temp"] = 30;
+        }
+        tmp.value = s["temp"];
+    }
+    </script>
+    <div>
+        <form method="GET" id="form" action="/ir">
+            <input type="number" name="code" step="1" min="1">
+            <input type="submit" value="Send">
+        </form>
+    </div>
+</body>
+
+
+</html>

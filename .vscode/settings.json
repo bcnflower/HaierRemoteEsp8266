@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "optional": "cpp",
+        "functional": "cpp",
+        "limits": "cpp",
+        "numeric": "cpp",
+        "tuple": "cpp",
+        "random": "cpp",
+        "*.tcc": "cpp",
+        "string": "cpp",
+        "vector": "cpp",
+        "utility": "cpp"
+    }
+}
